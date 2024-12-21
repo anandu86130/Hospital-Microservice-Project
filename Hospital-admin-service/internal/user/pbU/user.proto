@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package pbU;
+
+option go_package = "./";
+
+// Define the UserService with BlockUser RPC
+service UserService {
+    rpc BlockUser(ID) returns (Response);
+    rpc UnblockUser(ID)returns(Response);
+    rpc UserList(NoParam) returns (UserListResponse);
+}
+
+// Define the Response message
+message Response {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+// Define the ID message
+message ID {
+    uint32 ID = 1;
+}
+
+message Profile{
+    uint32 User_ID = 1;
+    string name = 2;
+    string email = 3;
+    string gender = 4;
+    string age = 5;
+    string number = 6;
+    string password = 7;
+    string address = 8;
+    bool Is_Blocked = 9;
+}
+
+message UserListResponse {
+    repeated Profile Profiles = 1;
+}
+
+message NoParam{}

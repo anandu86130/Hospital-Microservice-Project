@@ -1,0 +1,214 @@
+syntax = "proto3";
+
+package pbU;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="./";
+
+service UserService {
+    rpc UserSignup(Signup) returns (Response);
+    rpc VerifyOTP(OTP) returns (Response);
+    rpc UserLogin(Login) returns (Response);
+    rpc ViewProfile(ID) returns (Profile);
+    rpc EditProfile(Profile) returns (Profile);
+    rpc ChangePassword(Password) returns (Response);
+    rpc BlockUser(ID) returns (Response);
+    rpc UnblockUser(ID) returns (Response);
+    rpc UserList(NoParam) returns (UserListResponse);
+    rpc DoctorList(NoParam) returns (DoctorListResponse);
+    rpc ViewAvailability(NoParam) returns (AvailabilityListResponse);
+    rpc BookAppoinment(Appoinment) returns (Response);
+    rpc UserViewAppointment(ID) returns (AppointmentList);
+    rpc CancelAppointment(cancelappointmentreq) returns(Response);
+    rpc ViewPrescription(Req) returns (PrescriptionListResponse);
+    rpc DoctorDetails(doctor) returns (doctorresponse);
+    rpc CreatePayment(ConfirmAppointment) returns (PaymentResponse);
+    rpc UserPaymentSuccess(UserPayment) returns(UserPaymentStatusResponse);
+}
+
+message Signup {
+    string name = 1;
+    string email = 2;
+    string gender = 3;
+    string age = 4;
+    string number = 5;
+    string password = 6;
+    string address = 7;
+}
+
+message Response {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+message OTP {
+    string Email = 1;
+    string Otp = 2;
+}
+
+message Login {
+    string Email = 1;
+    string Password = 2;
+}
+
+message ID {
+    uint32 ID = 1;
+}
+
+message Profile {
+    uint32 User_ID = 1;
+    string name = 2;
+    string email = 3;
+    string gender = 4;
+    string age = 5;
+    string number = 6;
+    string password = 7;
+    string address = 8;
+    bool Is_Blocked = 9;
+}
+
+message Password {
+    uint32 User_ID = 1;
+    string Old_Password = 2;
+    string New_Password = 3;
+    string Confirm_Password = 4;
+}
+
+message NoParam {}
+
+message UserListResponse {
+    repeated Profile Profiles = 1;
+}
+
+message DoctorProfile {
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string specialization = 4;
+    uint32 years_of_experience = 5;
+    string liscence_number = 6;
+    uint32 fees = 7;
+}
+
+message DoctorListResponse {
+    repeated DoctorProfile Profiles = 1;
+}
+
+message AvailabilityList {
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message AvailabilityListResponse {
+    repeated AvailabilityList Availabilities = 1;
+}
+
+message Appoinment {
+    uint32 doctorid = 1;
+    uint32 userid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message Appointment {
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+}
+
+message AppointmentList {
+    repeated Appointment profiles = 1;
+}
+
+message prescriptionList {
+    uint32 id = 1;
+    uint32 appointmentid = 2;
+    uint32 doctorid = 3;
+    uint32 userid = 4;
+    string medicine = 5;
+    string notes = 6;
+    google.protobuf.Timestamp date = 7;
+    google.protobuf.Timestamp starttime = 8;
+    google.protobuf.Timestamp endtime = 9;
+}
+
+message PrescriptionListResponse {
+    repeated prescriptionList Profiles = 1;
+}
+
+message Req {
+    uint32 userid = 1;
+    uint32 appoinmentid = 2;
+}
+
+message ConfirmAppointment {
+    uint32 appoinmentid = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    uint32 fees = 4;
+    string status = 5;
+    string paymentid = 6;
+}
+
+message cancelappointmentreq{
+    uint32 userid = 1;
+    uint32 appointmentid = 2;
+}
+
+message doctor {
+    uint32 doctorid = 1;
+}
+
+message doctorresponse {
+    string name = 1;
+    uint32 fees = 2;
+}
+
+message PaymentResponse {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    Status status = 1;
+    string message = 2;
+    string paymentid = 3;   // PaymentIntent ID from Stripe
+    string client_secret = 4; // Separate field for client secret
+    uint32 userid = 5;
+    uint32 amount = 6;
+    uint32 appoinmentid = 7;
+}
+
+message UserPayment {
+    uint32 UserID = 1;
+    string PaymentID = 2;
+    uint32 Amount = 3;    // Changed to double to match consistency
+    uint32 appointmentid = 4;
+}
+
+message UserPaymentStatusResponse {
+        enum PaymentStatus {
+            
+        SUCCESS = 0;
+        FAILED = 1;
+        PENDING = 2;
+    }
+    
+    PaymentStatus status = 1;
+    string message = 2;
+}

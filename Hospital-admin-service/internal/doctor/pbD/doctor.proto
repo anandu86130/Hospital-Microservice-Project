@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package pbD;
+
+option go_package = "./";
+
+// Define the UserService with BlockUser RPC
+service DoctorService{
+    rpc BlockDoctor(ID) returns (Response);
+    rpc UnblockDoctor(ID)returns(Response);
+    rpc IsVerified(ID) returns(Response);
+    rpc DoctorList(NoParam) returns(DoctorListResponse);
+}
+
+// Define the Response message
+message Response {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+// Define the ID message
+message ID {
+    uint32 ID = 1;
+}
+
+message NoParam{}
+
+message DoctorProfile{
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string specialization = 4;
+    uint32 years_of_experience = 5;
+    string liscence_number = 6;
+    uint32 fees = 7;
+}
+
+message DoctorListResponse {
+    repeated DoctorProfile Profiles = 1;
+}

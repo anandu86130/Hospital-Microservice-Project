@@ -1,0 +1,28 @@
+syntax="proto3";
+
+package pbB;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="./";
+
+service BookingService{
+    rpc ViewAllAppointment(NoParam) returns(ViewAppointmentList);
+}
+
+message NoParam{}
+
+message ViewAppointment{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+    string paymentstatus = 7;
+    uint32 amount = 8;
+}
+
+message ViewAppointmentList {
+    repeated ViewAppointment profiles = 1;
+}

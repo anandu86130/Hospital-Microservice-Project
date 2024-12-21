@@ -1,0 +1,411 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        #container {
+            width: 400px;
+            height: 650px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        #messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            list-style: none;
+        }
+
+        #messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages::-webkit-scrollbar-thumb {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        #messages li {
+            margin: 8px 0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            max-width: 75%;
+            font-size: 14px;
+            word-wrap: break-word;
+            animation: slideIn 0.3s ease;
+        }
+
+        .sender {
+            background: #667eea;
+            color: #fff;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .receiver {
+            background: #eaeaea;
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chatbox {
+            display: flex;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        #messageInput {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #messageInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendButton {
+            background: violet; /* Changed to violet */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0; /* Changed to square */
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        #sendButton:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Unique Chat</h1>
+        <ul id="messages">
+            {{range .response}}
+                {{if eq .User_ID $.id}}
+                    <li class="sender">{{.Content}}</li>
+                {{else}}
+                    <li class="receiver">{{.Content}}</li>
+                {{end}}
+            {{end}}
+        </ul>
+        <form id="chatbox">
+            <textarea id="messageInput" placeholder="Type your message..."></textarea>
+            <button id="sendButton" type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(function(){
+            var socket = null;
+            var msgBox = $("#messageInput");
+            var messages = $("#messages");
+
+            $("#chatbox").submit(function(event){
+                event.preventDefault();
+                if (!msgBox.val()) return false;
+                if (!socket) {
+                    alert("Error: There is no socket connection.");
+                    return false;
+                }
+
+                var message = {
+                    userId: parseInt(userId),
+                    receiverId: parseInt(receiverId),
+                    content: msgBox.val()
+                };
+
+                socket.send(JSON.stringify(message));
+                msgBox.val("");
+                return false;
+            });
+
+            if (!window["WebSocket"]) {
+                alert("Error: Your browser does not support web sockets.");
+            } else {
+                var urlParams = new URLSearchParams(window.location.search);
+                var userId = urlParams.get('id');
+                var receiverId = urlParams.get('receiverId');
+                
+                var socketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                var socketUrl = socketProtocol + "//" + window.location.host + "/api/v1/user/chat?id=" + userId + "&receiverId=" + receiverId;
+                
+                socket = new WebSocket(socketUrl);
+                socket.onmessage = function(e) {
+                    var message = JSON.parse(e.data);
+                    var li = $("<li>").text(message.content);
+                    li.addClass(message.userId == userId ? "sender" : "receiver");
+                    messages.append(li);
+                    messages.scrollTop(messages[0].scrollHeight);
+                }
+            }
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        #container {
+            width: 400px;
+            height: 650px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        h1 {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        #messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            list-style: none;
+        }
+
+        #messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages::-webkit-scrollbar-thumb {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
+
+        #messages li {
+            margin: 8px 0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            max-width: 75%;
+            font-size: 14px;
+            word-wrap: break-word;
+            animation: slideIn 0.3s ease;
+        }
+
+        .sender {
+            background: #667eea;
+            color: #fff;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .receiver {
+            background: #eaeaea;
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chatbox {
+            display: flex;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-top: 2px solid #ddd;
+        }
+
+        #messageInput {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #messageInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendButton {
+            background: violet;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s ease;
+        }
+
+        #sendButton:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Unique Chat</h1>
+        <ul id="messages">
+            {{range .response}}
+                {{if eq .User_ID $.id}}
+                    <li class="sender">{{.Content}}</li>
+                {{else}}
+                    <li class="receiver">{{.Content}}</li>
+                {{end}}
+            {{end}}
+        </ul>
+        <form id="chatbox">
+            <textarea id="messageInput" placeholder="Type your message..."></textarea>
+            <button id="sendButton" type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(function() {
+            var socket = null;
+            var msgBox = $("#messageInput");
+            var messages = $("#messages");
+
+            $("#chatbox").submit(function(event) {
+                event.preventDefault();
+                if (!msgBox.val()) return false;
+                if (!socket) {
+                    alert("Error: There is no socket connection.");
+                    return false;
+                }
+
+                var message = {
+                    userId: parseInt(userId),
+                    receiverId: parseInt(receiverId),
+                    content: msgBox.val()
+                };
+
+                socket.send(JSON.stringify(message));
+                msgBox.val("");
+                return false;
+            });
+
+            if (!window["WebSocket"]) {
+                alert("Error: Your browser does not support web sockets.");
+            } else {
+                var urlParams = new URLSearchParams(window.location.search);
+                var userId = urlParams.get('id');
+                var receiverId = urlParams.get('receiverId');
+
+                var socketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                var socketUrl = socketProtocol + "//" + window.location.host + "/api/v1/user/chat?id=" + userId + "&receiverId=" + receiverId;
+
+                // Connect to the WebSocket
+                socket = new WebSocket(socketUrl);
+
+                // Handle incoming messages
+                socket.onmessage = function(e) {
+                    var message = JSON.parse(e.data);
+                    var li = $("<li>").text(message.content);
+                    li.addClass(message.userId == userId ? "sender" : "receiver");
+                    messages.append(li);
+                    messages.scrollTop(messages[0].scrollHeight);
+                };
+
+                // Handle socket connection errors
+                socket.onerror = function(error) {
+                    console.error("WebSocket error:", error);
+                    alert("WebSocket connection error: " + error.message);
+                };
+
+                // Handle connection close
+                socket.onclose = function() {
+                    console.warn("WebSocket connection closed.");
+                };
+            }
+        });
+    </script>
+</body>
+</html>

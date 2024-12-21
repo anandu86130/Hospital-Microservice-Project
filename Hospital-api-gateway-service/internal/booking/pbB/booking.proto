@@ -1,0 +1,80 @@
+syntax="proto3";
+
+package pbB;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="./";
+
+service BookingService{
+    rpc AddAvailability(Availability) returns(Response);
+    rpc ViewAvailability(NoParam) returns(AvailabilityListResponse);
+    rpc AddBooking(Booking) returns(Response);
+    rpc ViewBooking(ID) returns(BookingListResponse);
+    rpc AddPrescription(prescription) returns(Response);
+}
+
+message Availability{
+    uint32 doctorid = 1;
+    google.protobuf.Timestamp date = 2;
+    google.protobuf.Timestamp starttime = 3;
+    google.protobuf.Timestamp endtime = 4;
+}
+
+message Booking{
+    uint32 doctorid = 1;
+    uint32 userid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message Response{
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+message NoParam{}
+
+message AvailabilityList{
+    uint32 id = 1;
+     uint32 doctorid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message AvailabilityListResponse {
+    repeated AvailabilityList Availabilities = 1;
+}
+
+message ID{
+    uint32 doctorid = 1;
+}
+message BookingList{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message BookingListResponse {
+    repeated BookingList Bookings = 1;
+}
+
+message prescription{
+    uint32 appointmentid = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    string medicine = 4;
+    string notes = 5;
+}

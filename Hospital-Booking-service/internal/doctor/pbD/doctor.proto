@@ -1,0 +1,18 @@
+syntax="proto3";
+
+package pbD;
+
+option go_package="./";
+
+service DoctorService{
+    rpc DoctorDetails(doctor) returns(doctorresponse);
+}
+
+message doctor{
+    uint32 doctorid = 1;
+}
+
+message doctorresponse{
+    string name = 1;
+    uint32 fees = 2;
+}

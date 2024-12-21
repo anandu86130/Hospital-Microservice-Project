@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./";
+
+service AdminService {
+    rpc AdminLoginRequest(AdminLogin) returns(AdminResponse);
+    rpc AdminBlockUser(AdID) returns(AdminResponse);
+    rpc AdminUnblockUser(AdID)returns(AdminResponse);
+    rpc AdminBlockDoctor(AdID) returns(AdminResponse);
+    rpc AdminUnblockDoctor(AdID)returns(AdminResponse);
+    rpc AdminIsVerified(AdID)returns(AdminResponse);
+    rpc UserList(NoParam) returns (UserListResponse);
+    rpc DoctorList(NoParam) returns(DoctorListResponse);
+    rpc ViewAllAppointment(NoParam) returns(ViewAppointmentList);
+}
+
+message AdID {
+    uint32 ID = 1;
+}
+
+message AdminLogin{
+    string email = 1;
+    string password =2;
+}
+
+message AdminResponse {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+message Profile{
+    uint32 User_ID = 1;
+    string name = 2;
+    string email = 3;
+    string gender = 4;
+    string age = 5;
+    string number = 6;
+    string password = 7;
+    string address = 8;
+    bool Is_Blocked = 9;
+}
+
+message UserListResponse {
+    repeated Profile Profiles = 1;
+}
+
+message NoParam{}
+
+message DoctorProfile{
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string specialization = 4;
+    uint32 years_of_experience = 5;
+    string liscence_number = 6;
+    uint32 fees = 7;
+}
+
+message DoctorListResponse {
+    repeated DoctorProfile Profiles = 1;
+}
+
+message ViewAppointment{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+    string paymentstatus = 7;
+    uint32 amount = 8;
+}
+
+message ViewAppointmentList {
+    repeated ViewAppointment profiles = 1;
+}

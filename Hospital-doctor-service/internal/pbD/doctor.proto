@@ -1,0 +1,152 @@
+syntax="proto3";
+
+package pbD;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="./";
+
+service DoctorService{
+    rpc DoctorSignup(Signup) returns(Response);
+    rpc VerifyOTP(OTP) returns(Response);
+    rpc DoctorLogin(Login) returns(Response);
+    rpc ViewProfile(ID) returns(DoctorProfile);
+    rpc EditProfile(DoctorProfile) returns(DoctorProfile);
+    rpc ChangePassword(Password) returns(Response);
+    rpc BlockDoctor(ID) returns(Response);
+    rpc UnblockDoctor(ID) returns(Response);
+    rpc IsVerified(ID) returns(Response);
+    rpc DoctorList(NoParam) returns(DoctorListResponse);
+    rpc AddAvailability(Availability) returns(Response);
+    rpc EditAvailability(Availability) returns(Response);
+    rpc ViewAvailability(NoParam) returns(AvailabilityListResponse);
+    rpc UserList(NoParam) returns (UserListResponse);
+    rpc ViewAppointment(ID) returns(AppointmentList);
+    rpc AddPrescription(prescription) returns(Response);
+    rpc DoctorDetails(doctor) returns(doctorresponse);
+}
+
+message Signup{
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string specialization = 4;
+    uint32 years_of_experience = 5;
+    uint32 fees = 6;
+}
+
+message OTP{
+    string Email = 1;
+    string Otp = 2;
+}
+
+message Response{
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+message Login{
+    string email = 1;
+    string password = 2;
+}
+
+message ID{
+    uint32 ID = 1;
+}
+
+message DoctorProfile{
+    uint32 id = 1;
+    string name = 2;
+    string email = 3;
+    string specialization = 4;
+    uint32 years_of_experience = 5;
+    string liscence_number = 6;
+    uint32 fees = 7;
+    uint32 Rating = 8;
+}
+
+message NoParam{}
+
+message Password{
+    uint32 User_ID = 1;
+    string Old_Password = 2;
+    string New_Password = 3;
+    string Confirm_Password = 4;
+}
+
+message DoctorListResponse {
+    repeated DoctorProfile Profiles = 1;
+}
+
+message Availability{
+    uint32 doctorid = 1;
+    google.protobuf.Timestamp date = 2;
+    google.protobuf.Timestamp starttime = 3;
+    google.protobuf.Timestamp endtime = 4;
+}
+
+message AvailabilityList{
+    uint32 id = 1;
+     uint32 doctorid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message AvailabilityListResponse {
+    repeated AvailabilityList Availabilities = 1;
+}
+
+message Profile{
+    uint32 User_ID = 1;
+    string name = 2;
+    string email = 3;
+    string gender = 4;
+    string age = 5;
+    string number = 6;
+    string password = 7;
+    string address = 8;
+    bool Is_Blocked = 9;
+}
+
+message UserListResponse {
+    repeated Profile Profiles = 1;
+}
+
+message Appointment{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+}
+
+message AppointmentList {
+    repeated Appointment Profiles = 1;
+}
+
+message prescription{
+    uint32 appointmentid = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    string medicine = 4;
+    string notes = 5;
+}
+
+message doctor{
+    uint32 doctorid = 1;
+}
+
+message doctorresponse{
+    string name = 1;
+    uint32 fees = 2;
+}

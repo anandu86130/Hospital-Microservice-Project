@@ -1,0 +1,191 @@
+syntax="proto3";
+
+package pbB;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package="./";
+
+service BookingService{
+    rpc AddAvailability(Availability) returns(Response);
+    rpc ViewAvailability(NoParam) returns(AvailabilityListResponse);
+    rpc BookAppoinment(Appoinment) returns(Response);
+    rpc ViewAppointment(ID) returns(AppointmentList);
+    rpc UserViewAppointment(ID) returns(AppointmentList);
+    rpc ViewAllAppointment(NoParam) returns(ViewAppointmentList);
+    rpc CancelAppointment(cancelappointmentreq) returns(Response);  
+    rpc AddPrescription(prescription) returns(Response);
+    rpc ViewPrescription(Req) returns(PrescriptionListResponse);
+    rpc CreatePayment(ConfirmAppointment) returns (PaymentResponse);
+    rpc UserPaymentSuccess(Payment)returns(PaymentStatusResponse);
+    rpc GenerateAppointment(AppointmentID) returns (AppointmentResultResponse);
+}
+
+message Availability{
+    uint32 doctorid = 1;
+    google.protobuf.Timestamp date = 2;
+    google.protobuf.Timestamp starttime = 3;
+    google.protobuf.Timestamp endtime = 4;
+}
+
+message Appoinment{
+    uint32 doctorid = 1;
+    uint32 userid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message Appointment{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+}
+
+message AppointmentList {
+    repeated Appointment profiles = 1;
+}
+
+message cancelappointmentreq{
+    uint32 userid = 1;
+    uint32 appointmentid = 2;
+}
+
+message Response{
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    Status status = 1;
+    string message = 2;
+    oneof payload {
+        string error = 3;
+        string data = 4;
+    }
+}
+
+message NoParam{}
+
+message AvailabilityList{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    google.protobuf.Timestamp date = 3;
+    google.protobuf.Timestamp starttime = 4;
+    google.protobuf.Timestamp endtime = 5;
+}
+
+message AvailabilityListResponse {
+    repeated AvailabilityList Availabilities = 1;
+}
+
+message ID{
+    uint32 ID = 1;
+}
+
+message prescription{
+    uint32 appointmentid = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    string medicine = 4;
+    string notes = 5;
+}
+
+message prescriptionList{
+    uint32 id = 1;
+    uint32 appointmentid = 2;
+    uint32 doctorid = 3;
+    uint32 userid = 4;
+    string medicine = 5;
+    string notes = 6;
+    google.protobuf.Timestamp date = 7;
+    google.protobuf.Timestamp starttime = 8;
+    google.protobuf.Timestamp endtime = 9;
+}
+
+message PrescriptionListResponse {
+    repeated prescriptionList Profiles = 1;
+}
+
+message Req{
+    uint32 userid = 1;
+    uint32 appoinmentid = 2;
+}
+
+message Data {
+    map<string, string> data = 1; // This will allow a map of string to string
+}
+
+message ConfirmAppointment {
+    uint32 appoinmentid = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    uint32 fees = 4;
+    string status = 5;
+    string paymentid = 6;
+}
+
+message PaymentResponse {
+        enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+    
+    Status status = 1;
+    string message = 2;
+    string paymentid = 3;   // PaymentIntent ID from Stripe
+    string clientsecret = 4; // Separate field for client secret
+    uint32 userid = 5;
+    uint32 amount = 6;
+    uint32 appoinmentid = 7;
+}
+
+message Payment {
+    uint32 UserID = 1;
+    string PaymentID = 2;
+    uint32 Amount = 3;    // Changed to double to match consistency
+    uint32 AppointmentID = 4;
+}
+
+message PaymentStatusResponse {
+    enum PaymentStatus {
+        SUCCESS = 0;
+        FAILED = 1;
+        PENDING = 2;
+    }
+    
+    PaymentStatus status = 1;
+    string message = 2;
+}
+
+message AppointmentID {
+    uint32 ID = 1;  
+}
+
+message AppointmentResultResponse {
+    enum Status {
+        OK = 0;
+        ERROR = 1;
+    }
+
+    Status status = 1;
+    string message = 2;
+    Appointment appointment_result = 3; 
+}
+
+message ViewAppointment{
+    uint32 id = 1;
+    uint32 doctorid = 2;
+    uint32 userid = 3;
+    google.protobuf.Timestamp date = 4;
+    google.protobuf.Timestamp starttime = 5;
+    google.protobuf.Timestamp endtime = 6;
+    string paymentstatus = 7;
+    uint32 amount = 8;
+}
+
+message ViewAppointmentList {
+    repeated ViewAppointment profiles = 1;
+}

@@ -1,0 +1,17 @@
+syntax="proto3";
+
+package pbU;
+
+option go_package="./";
+
+service UserService{
+    rpc UserDetails(user) returns(userresponse);
+}
+
+message user{
+    uint32 userid = 1;
+}
+
+message userresponse{
+    string email = 1;
+}
